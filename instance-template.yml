@@ -6,7 +6,7 @@ Parameters:
   NetworkStackName:
     Type: String
     Description: Name of the Cloud Formation Template 1 - Network Stack
-    Default: Project1
+    Default: Project1Network
 Resources:
 
   # Optional BastionHostInstance would go here
@@ -53,6 +53,11 @@ Resources:
           !Sub "${NetworkStackName}-VPCID"
       HealthyThresholdCount: 2
       Name: Project1ALBTargetGroup
+      Targets:
+        - Id: !Ref  WebServerInstance1
+          Port: 80
+        - Id: !Ref WebServerInstance2
+          Port: 80
   ApplicationLoadBalancer:
     Type: AWS::ElasticLoadBalancingV2::LoadBalancer
     Properties:
@@ -60,10 +65,13 @@ Resources:
       SecurityGroups:
         Fn::ImportValue:
           !Sub "${NetworkStackName}-ALBSG"
-      Subnets:
+  ALBtoPubSub1:
+    Type:  AWS::ElasticLoadBalancingV2::LoadBalancerSubnetMapping
+    Properties:
+      AllocationId: !Ref ApplicationLoadBalancer
+      SubnetId: 
         Fn::ImportValue:
-          !Sub "${NetworkStackName}-PubSub1, ${NetworkStackName}-PubSub2"
-
+          !Sub "${NetworkStackName}-PubSub1"
 Outputs:
   ApplicationLoadBalancer:
     Description: URL of the Loadbalancer
