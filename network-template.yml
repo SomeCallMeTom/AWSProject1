@@ -94,8 +94,30 @@ Resources:
       RouteTableId:
         Ref: PublicRouteTable
   ALBSecurityGroup:
-
+    Type: AWS::EC2::SecurityGroup
+    Properties:
+      GroupDescription: Allow all http traffic on tcp port 80
+      GroupName: LoadBalancerSG
+      VpcId: !Ref VPC
+      SecurityGroupIngress:
+        - IpProtocol: tcp
+          FromPort: 80
+          ToPort: 80
+          CidrIp: 0.0.0.0/0 
   WebInstanceSecurityGroup:
+      Type: AWS::EC2::SecurityGroup
+    Properties:
+        GroupDescription: Allow traffic from ALB to Web Servers
+        GroupName:  WebServerSG
+        VpcId: !Ref VPC
+  WebInstanceSecurityGroupIngressRule:
+    Type: AWS::EC2::SecurityGroupIngress
+    Properties:
+        IpProtocol: tcp
+        FromPort: 80
+        ToPort: 80
+        SourceSecurityGroupId: !Ref ALBSecurityGroup
+        GroupId:  !Ref WebInstanceSecurityGroup
 
   # Optional BastionSercurityGroup if you build a Bastion Host
 
@@ -110,13 +132,38 @@ Outputs:
       Name:
         Fn::Sub: "${AWS::StackName}-VPCId"
   PrivateSubnet1:
-
+    Description: PrivateSubnet1
+    Value:
+      Fn::GetAtt:
+      - PrivateSubnet1
+      - AvailabilityZone
   PrivateSubnet2:
-
+    Description: PrivateSubnet2
+    Value:
+      Fn::GetAtt:
+      - PrivateSubnet2
+      - AvailabilityZone
   PublicSubnet1:
-
+    Description: PublicSubnet1
+    Value:
+      Fn::GetAtt:
+      - PublicSubnet1
+      - AvailabilityZone
   PublicSubnet2:
-
+    Description: PublicSubnet1
+    Value:
+      Fn::GetAtt:
+      - PublicSubnet2
+      - AvailabilityZone
   WebInstanceSecurityGroup:
-
+    Description: Allow traffic from ALB to Web Servers
+    Value:
+      Fn::GetAtt:
+      - WebInstanceSecurityGroup
+      - GroupId
   ALBSecurityGroup:
+      Description: Allow all http traffic on tcp port 80
+    Value:
+      Fn::GetAtt:
+      - ALBSecurityGroup
+      - GroupId
