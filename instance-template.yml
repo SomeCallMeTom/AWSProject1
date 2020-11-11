@@ -5,31 +5,64 @@ Description: Deploy EC2 instances and ALB for Project 1 - Outline of Resources/P
 Parameters:
   NetworkStackName:
     Type: String
-    Description: Project1
+    Description: Name of the Cloud Formation Template 1 - Network Stack
+    Default: Project1
 Resources:
 
-# Optional BastionHostInstance would go here
+  # Optional BastionHostInstance would go here
 
-WebServerInstance1:
-  Type: AWS::EC2::Instance
-  Properties:
-    ImageId: "ami-015f56077b7f5b83f"
-    InstanceType: t2.micro
-    KeyName: "project1"
-    SubnetId:
-      Fn::ImportValue:
-        !Sub "${NetworkStackName}-PrivateSubnet1"
-    GroupSet:
-      Fn::ImportValue:
-        !Sub "${NetworkStackName}-WebServerSG"
-
-WebServerInstance2:
-
-ALBListener:
-
-ALBTargetGroup:
-
-ApplicationLoadBalancer:
+  WebServerInstance1:
+    Type: AWS::EC2::Instance
+    Properties:
+      ImageId: "ami-015f56077b7f5b83f"
+      InstanceType: t2.micro
+      KeyName: "project1"
+      SubnetId:
+        Fn::ImportValue:
+          !Sub "${NetworkStackName}-PvtSub1"
+      SecurityGroupIds:
+        Fn::ImportValue:
+          !Sub "${NetworkStackName}-WebServSG"
+  WebServerInstance2:
+    Type: AWS::EC2::Instance
+    Properties:
+      ImageId: "ami-015f56077b7f5b83f"
+      InstanceType: t2.micro
+      KeyName: "project1"
+      SubnetId:
+        Fn::ImportValue:
+          !Sub "${NetworkStackName}-PvtSub2"
+      SecurityGroupIds:
+        Fn::ImportValue:
+          !Sub "${NetworkStackName}-WebServSG"
+  ALBListener:
+    Type: AWS::ElasticLoadBalancingV2::Listener
+    Properties:
+      DefaultActions:
+        - Type: "redirect"
+          RedirectConfig:
+              StatusCode: "HTTP_302"
+      LoadBalancerArn: Project1ALB
+      Protocol: HTTP
+      Port: 80
+  ALBTargetGroup:
+    Type: AWS::ElasticLoadBalancingV2::TargetGroup
+    Properties:
+      VpcId: 
+        Fn::ImportValue:
+          !Sub "${NetworkStackName}-VPCID"
+      HealthyThresholdCount: 2
+      Name: Project1ALBTargetGroup
+  ApplicationLoadBalancer:
+    Type: AWS::ElasticLoadBalancingV2::LoadBalancer
+    Properties:
+      Name: Project1ALB
+      SecurityGroups:
+        Fn::ImportValue:
+          !Sub "${NetworkStackName}-ALBSG"
+      Subnets:
+        Fn::ImportValue:
+          !Sub "${NetworkStackName}-PubSub1, ${NetworkStackName}-PubSub2"
 
 Outputs:
   ApplicationLoadBalancer:
@@ -40,4 +73,4 @@ Outputs:
       - - http://
         - Fn::GetAtt:
           - ApplicationLoadBalancer
-          - PublicDnsName
+          - DNSName
