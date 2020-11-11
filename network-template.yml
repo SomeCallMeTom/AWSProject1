@@ -35,30 +35,30 @@ Resources:
         Value: "Public Subnet 1"
   PublicSubnet2:
     Type: AWS::EC2::Subnet
-      Properties:
-        CidrBlock: 10.0.2.0/24
-        VpcId: 
-          Ref: VPC
+    Properties:
+      CidrBlock: 10.0.2.0/24
+      VpcId: 
+        Ref: VPC
       AvailabilityZone: "us-east-1b"
       Tags:
       - Key: Name
         Value: "Public Subnet 2"
   PrivateSubnet1:
-        Type: AWS::EC2::Subnet
-      Properties:
-        CidrBlock: 10.0.3.0/24
-        VpcId: 
-          Ref: VPC
+    Type: AWS::EC2::Subnet
+    Properties:
+      CidrBlock: 10.0.3.0/24
+      VpcId: 
+        Ref: VPC
       AvailabilityZone: "us-east-1a"
       Tags:
       - Key: Name
         Value: "Private Subnet 1"
   PrivateSubnet2:
     Type: AWS::EC2::Subnet
-      Properties:
-        CidrBlock: 10.0.4.0/24
-        VpcId: 
-          Ref: VPC
+    Properties:
+      CidrBlock: 10.0.4.0/24
+      VpcId: 
+        Ref: VPC
       AvailabilityZone: "us-east-1b"
       Tags:
       - Key: Name
