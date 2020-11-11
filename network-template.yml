@@ -80,9 +80,19 @@ Resources:
       GatewayId:
         Ref: InternetGateway
   PublicSubnetRouteTableAssociation1:
-
+    Type: AWS::EC2::SubnetRouteTableAsssociation
+    Properties:
+      SubnetId:
+        Ref: PublicSubnet1
+      RouteTableId:
+        Ref: PublicRouteTable
   PublicSubnetRouteTableAssociation2:
-
+    Type: AWS::EC2::SubnetRouteTableAsssociation
+    Properties:
+      SubnetId:
+        Ref: PublicSubnet2
+      RouteTableId:
+        Ref: PublicRouteTable
   ALBSecurityGroup:
 
   WebInstanceSecurityGroup:
