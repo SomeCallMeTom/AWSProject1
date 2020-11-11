@@ -1,0 +1,1 @@
+aws s3 sync . s3://darlington.project1 --exclude "*" --include "*.yml"
